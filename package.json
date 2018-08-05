@@ -8,8 +8,8 @@
     "npm": "5.6.0"
   },
   "scripts": {
-    "test": "mocha --exit",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha --exit"
   },
   "author": "",
   "license": "ISC",
