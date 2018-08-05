@@ -105,8 +105,6 @@ describe('UserPlan API', function() {
         .send([])
         .then(function(res) {
           expect(res).to.have.status(404);
-          //riddles=res.body;
-          //expect(res.body.riddles.length).to.equal(0);
           expect('Location', '/userplan/existing');
         });
     });
