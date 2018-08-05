@@ -9,6 +9,7 @@ const { UserPlan } = require('./models/userPlan');
 const jwtDecode = require('jwt-decode');
 const jwt = require('jwt-simple');
 const secret = 'janaganamana';
+//Test
 
 const requireAuth = passport.authenticate('jwt', { session: false });
 const requireSignin = passport.authenticate('local', { session: false });
