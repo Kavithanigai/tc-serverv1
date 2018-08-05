@@ -6,24 +6,28 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const UserPlanSchema = new Schema({
-  title:{
+  title: {
     type: String,
     required: true
   },
-  packinglist:{
-    type: String,
+  packinglist: {
+    type: String
   },
-  destination:{
+  destination: {
     type: String,
     required: true
   },
-  tripnotes:{
-    type: String,
+  tripnotes: {
+    type: String
   },
-  feedback:{
+  feedback: {
+    type: String
+  },
+  user: {
     type: String,
-   }
-   //,
+    required: true
+  }
+  //,
   // token:{
   //   type: String,
   //   required: true
@@ -35,10 +39,14 @@ UserPlanSchema.methods.serialize = function() {
     id: this._id,
     title: this.title,
     destination: this.destination,
-    token: this.token
+    packinglist: this.packinglist,
+    tripnotes: this.tripnotes,
+    feedback: this.feedback,
+    token: this.token,
+    user: this.user
   };
 };
 
 const UserPlan = mongoose.model('UserPlan', UserPlanSchema);
 
-module.exports = {UserPlan};
+module.exports = { UserPlan };

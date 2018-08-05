@@ -2,33 +2,49 @@ const jwt = require('jwt-simple');
 const config = require('../config');
 const User = require('../models/user');
 
-function tokenForUser(user){
+function tokenForUser(user) {
   const timestamp = new Date().getTime();
-  return jwt.encode({sub: user.id, iat: timestamp},config.secret);
+  //return jwt.encode({ sub: user.id, iat: timestamp }, config.secret);
+  let userToken = jwt.encode({ sub: user.id, iat: timestamp }, config.secret);
+  //return jwt.encode({ sub: user.id, iat: timestamp }, config.secret);
+  //let decoded = jwt.decode(userToken, config.secret);
+  //console.log('tokenForUser: ' + decoded);
+  let tokbody = userToken.split('.')[1];
+  console.log('tokenForUser: tokbody=' + tokbody);
+  tokbody.replace('-', '+');
+  tokbody.replace('_', '/');
+  let parsed = JSON.parse(Buffer.from(tokbody, 'base64'));
+  console.log('tokenForUser: parsed=' + parsed.sub);
+  return userToken;
 }
 
-exports.signin = function(req,res,next){
+exports.signin = function(req, res, next) {
   //User has already have username and password, we have to supply token
-  res.send({token: tokenForUser(req.user)});
-}
+  res.send({ token: tokenForUser(req.user) });
+};
 
-exports.signup = function(req,res,next){
+exports.signup = function(req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmpassword = req.body.confirmpassword;
+  const username = req.body.username;
+  // const confirmpassword = req.body.confirmpassword;
 
-  if(!email || !password){
-    return res.status(422).send({error:'You must provide email and password'});
+  if (!email || !password || !username) {
+    return res
+      .status(422)
+      .send({ error: 'You must provide email,username and password' });
   }
-  if(req.body.password != req.body.confirmpassword){
-    return res.status(422).send({error:'Passwords do not match'});
-  }
+  // if (req.body.password !== req.body.confirmpassword) {
+  //   return res.status(422).send({ error: 'Passwords do not match' });
+  // }
   //See if user exists with given email
-  User.findOne({email: email}, function(err,existingUser){
-    if(err){return next(err);}
+  User.findOne({ email: email }, function(err, existingUser) {
+    if (err) {
+      return next(err);
+    }
     //If a user with email does exist display Error
-    if(existingUser){
-      return res.status(422).send({error:'Email is in use'});
+    if (existingUser) {
+      return res.status(422).send({ error: 'Email is in use' });
     }
     //If a user doesnot exist create a user record
     const user = new User({
@@ -36,10 +52,11 @@ exports.signup = function(req,res,next){
       password: password
     });
     user.save(function(err) {
-      if(err){ return next(err);}
+      if (err) {
+        return next(err);
+      }
     });
     //Respond to request indicating user created
-    res.json({token: tokenForUser(user)});
+    res.json({ token: tokenForUser(user) });
   });
-
-}
+};

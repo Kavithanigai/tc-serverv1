@@ -10,23 +10,23 @@ const userSchema = new Schema({
     lowercase: true
   },
   password: String,
-  confirmpassword: String
+  username: String
 });
 
 //On save Hook, encrypt password
-userSchema.pre('save', function(next){
+userSchema.pre('save', function(next) {
   //get access to user model
   const user = this;
 
   //generate salt with time, then run callback
-  bcrypt.genSalt(10, function(err,salt){
-    if(err){
+  bcrypt.genSalt(10, function(err, salt) {
+    if (err) {
       return next(err);
     }
 
     //hash password using salt
-    bcrypt.hash(user.password, salt, null, function(err,hash){
-      if(err){
+    bcrypt.hash(user.password, salt, null, function(err, hash) {
+      if (err) {
         return next(err);
       }
       user.password = hash;
@@ -36,15 +36,17 @@ userSchema.pre('save', function(next){
 });
 
 //compare passwords
-userSchema.methods.comparePassword = function(candidatePassword,callback){
-  bcrypt.compare(candidatePassword, this.password, function(err,isMatch){
-    if(err){return callback(err);}
-    callback(null,isMatch);
-  })
-}
+userSchema.methods.comparePassword = function(candidatePassword, callback) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, isMatch);
+  });
+};
 
 //Create model
-const ModelClass = mongoose.model('user',userSchema);
+const ModelClass = mongoose.model('user', userSchema);
 
 //Export model
 module.exports = ModelClass;
